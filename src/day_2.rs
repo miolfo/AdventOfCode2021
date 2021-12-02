@@ -11,6 +11,22 @@ pub fn count_sub_position(input: Vec<String>) {
     println!("Multiplied position is {}", pos.0 * pos.1)
 }
 
+pub fn count_sub_position_with_aim(input: Vec<String>) {
+    let mut pos = (0, 0, 0);
+    for line in input {
+        let op = line_to_op(&line);
+        match op.operation_type {
+            OperationType::FORWARD => {
+                pos.0 += op.value;
+                pos.1 += op.value * pos.2;
+            },
+            OperationType::DOWN => pos.2 += op.value,
+            OperationType::UP => pos.2 -= op.value
+        }
+    }
+    println!("Multiplied position is {}", pos.0 * pos.1)
+}
+
 fn line_to_op(string: &str) -> Operation {
     let mut split = string.split_ascii_whitespace();
     Operation {
