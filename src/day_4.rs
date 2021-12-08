@@ -2,11 +2,66 @@ use std::vec;
 
 use crate::util;
 
+pub fn count_bingo_wins(input: Vec<String>) {
+    let board = board_from_input(&input);
+    for i in 5..board.numbers.len() {
+        let drawn_numbers = &board.numbers[0..i];
+        for single_board in &board.boards {
+            if check_bingo(drawn_numbers, single_board) {
+                let unused = get_unused(drawn_numbers, single_board);
+                let last = drawn_numbers.last().expect("unable to get last num");
+                let unused_count: usize = unused.into_iter().sum();
+                println!("last was {} and sum is {}, multiplied is {}", last, unused_count, last * unused_count);
+                return;
+            }
+        };
+    }
+}
+
+fn get_unused(numbers: &[usize], board: &[[usize; 5]; 5]) -> Vec<usize> {
+    let mut vector: Vec<usize> = vec![];
+    for x in 0..5 {
+        for y in 0..5 {
+            let num = board[x][y];
+            if !numbers.contains(&num) {
+                vector.push(num);
+            }
+        };
+    };
+    vector
+}
+
+fn check_bingo(numbers: &[usize], board: &[[usize; 5]; 5]) -> bool {
+    let rows = to_rows(board);
+    for row in rows {
+        let bingo = row.iter().all(|num| numbers.contains(num));
+        if bingo {
+            return true;
+        };
+    };
+    return false;
+}
+
+fn to_rows(board: &[[usize; 5]; 5]) -> Vec<[usize; 5]> {
+    let mut rows: Vec<[usize; 5]> = vec![];
+    for i in 0..5 {
+        rows.push(board[i]);
+    };
+
+    for j in 0..5 {
+        let mut row: [usize; 5] = [0; 5];
+        for k in 0..5 {
+            row[k] = board[j][k];
+        }
+        rows.push(row);
+    };
+    rows
+}
+
 fn board_from_input(input: &Vec<String>) -> BingoBoard {
     let mut nums: Vec<usize> = Vec::new();
     let mut board: Vec<[[usize; 5]; 5]> = vec![];
     let mut curr_vec: Vec<usize> = vec![];
-    //println!("{:?}", input);
     for (i, line) in input.iter().enumerate() {
         let trimmed = line.trim();
         if i == 0 {
@@ -23,7 +78,6 @@ fn board_from_input(input: &Vec<String>) -> BingoBoard {
             curr_vec.append(&mut as_nums);
         //Stop current boards calculation
         } else if trimmed.is_empty() && curr_vec.len() > 0 {
-            println!("{:?}", curr_vec);
             let board_arr: [[usize; 5]; 5] = vec_to_5_x_5(curr_vec);
             board.push(board_arr);
             curr_vec = vec![];
@@ -43,7 +97,6 @@ fn vec_to_5_x_5(input: Vec<usize>) -> [[usize; 5]; 5] {
             index += 1;
         } 
     }
-    println!("{:?}", arr);
     arr
 }
 
