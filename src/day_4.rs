@@ -18,6 +18,31 @@ pub fn count_bingo_wins(input: Vec<String>) {
     }
 }
 
+pub fn count_last_to_win(input: Vec<String>) {
+    let board = board_from_input(&input);
+    let board_count = board.boards.len();
+    let mut bingo_found = vec![false; board_count];
+
+    for i in 5..board.numbers.len() {
+        let drawn_numbers = &board.numbers[0..i];
+
+        for (index, single_board) in board.boards.iter().enumerate() {
+            if !bingo_found[index] && check_bingo(drawn_numbers, &single_board) {
+                bingo_found[index] = true;
+                //Check if only single board remains without a bingo
+                let remaining_count = bingo_found.clone().into_iter().filter(|it| {it == &false}).count();
+                if remaining_count == 0usize {
+                    let unused = get_unused(drawn_numbers, single_board);
+                    let last = drawn_numbers.last().expect("unable to get last num");
+                    let unused_count: usize = unused.into_iter().sum();
+                    println!("last was {} and sum is {}, multiplied is {}", last, unused_count, last * unused_count);
+                }
+            };
+        };
+    }
+}
+
+
 fn get_unused(numbers: &[usize], board: &[[usize; 5]; 5]) -> Vec<usize> {
     let mut vector: Vec<usize> = vec![];
     for x in 0..5 {
@@ -51,7 +76,7 @@ fn to_rows(board: &[[usize; 5]; 5]) -> Vec<[usize; 5]> {
     for j in 0..5 {
         let mut row: [usize; 5] = [0; 5];
         for k in 0..5 {
-            row[k] = board[j][k];
+            row[k] = board[k][j];
         }
         rows.push(row);
     };
