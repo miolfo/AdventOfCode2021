@@ -2,6 +2,7 @@ mod day_1;
 mod day_2;
 mod day_3;
 mod day_4;
+mod day_5;
 mod util;
 
 fn main() {
@@ -12,5 +13,6 @@ fn main() {
     //day_3::calculate_power_consumption(util::read_resource("day_3.txt"));
     //day_3::calculate_life_support_rating(util::read_resource("day_3.txt"));
     //day_4::count_bingo_wins(util::read_resource("day_4.txt"));
-    day_4::count_last_to_win(util::read_resource("day_4.txt"));
+    //day_4::count_last_to_win(util::read_resource("day_4.txt"));
+    day_5::count_dangerous_points(util::read_resource("day_5.txt"))
 }
